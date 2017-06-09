@@ -9,11 +9,11 @@
 #import "LandscapeView.h"
 
 NSString *const LandscapeCellIdentifier = @"LandscapeCell";
-NSInteger const authorCount = 10;
+NSInteger const authorCount = 4;
 
 @interface LandscapeView()<UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
 {
-    NSInteger leftIndex;  // 最左边的序号
+//    NSInteger leftIndex;  // 最左边的序号
 }
 @property (nonatomic, strong) UICollectionView *collectionView;
 
@@ -28,7 +28,7 @@ NSInteger const authorCount = 10;
         self.backgroundColor = [UIColor whiteColor];
         [self addSubview:self.collectionView];
         [self.collectionView registerClass:[LandscapeCell class] forCellWithReuseIdentifier:LandscapeCellIdentifier];
-        leftIndex = 0;
+//        leftIndex = 0;
     }
     return self;
 }
@@ -91,46 +91,66 @@ NSInteger const authorCount = 10;
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
-    CGFloat velocity_X = velocity.x;
-    NSLog(@"\n^^^ velocity.x: %@ ^^^\n", @(velocity_X));
-    
-    CGFloat x = targetContentOffset->x;
-    CGFloat pageWidth = (H_JMAuthorCell*2 + GAP_JMAuthorCell);
-
-    CGFloat movedX = x - pageWidth * (CGFloat)leftIndex;
-    
-    if (movedX < -pageWidth *0.5) {
-        // Move left
-        
-        CGFloat v_left = (fabs(velocity_X) > 0.4 ? fabs(round(velocity_X)) : 1);
-        if (v_left > 3) {
-            v_left = 2;
-        }
-        leftIndex -= v_left;
-        if (leftIndex <= 0) {
-            leftIndex = 0;
-        }
-    } else if (movedX > pageWidth * 0.5) {
-        // Move right
-        CGFloat v_right = fabs(round(velocity_X));
-        if (v_right > 3) {
-            v_right = 2;
-        }
-        leftIndex += (fabs(velocity_X) > 0.4 ? v_right : 1);
-//        if (leftIndex >= authorCount) {
-//            leftIndex = authorCount - 1;
-//        }
+    CGPoint originalTargetContentOffset = CGPointMake(targetContentOffset->x, targetContentOffset->y);
+    CGPoint targetCenter = CGPointMake(originalTargetContentOffset.x + CGRectGetWidth(self.collectionView.bounds)/2, CGRectGetHeight(self.collectionView.bounds) / 2);
+    NSIndexPath *indexPath = nil;
+    NSInteger i = 0;
+    while (indexPath == nil) {
+        targetCenter = CGPointMake(originalTargetContentOffset.x + CGRectGetWidth(self.collectionView.bounds)/2 + 10*i, CGRectGetHeight(self.collectionView.bounds) / 2);
+        indexPath = [self.collectionView indexPathForItemAtPoint:targetCenter];
+        i++;
     }
-    
-    if (fabs(velocity_X) >= 2) {
-        NSLog(@"\n***  >=2 leftIndex: %@ ***\n", @(leftIndex));
-        targetContentOffset->x = pageWidth * (CGFloat)leftIndex;
+    //这里用attributes比用cell要好很多，因为cell可能因为不在屏幕范围内导致cellForItemAtIndexPath返回nil
+    UICollectionViewLayoutAttributes *attributes = [self.collectionView.collectionViewLayout layoutAttributesForItemAtIndexPath:indexPath];
+    if (attributes) {
+        *targetContentOffset = CGPointMake(attributes.center.x - CGRectGetWidth(self.collectionView.bounds)/2, originalTargetContentOffset.y);
     } else {
-        NSLog(@"\n*** <2 leftIndex: %@ ***\n", @(leftIndex));
-        targetContentOffset->x = scrollView.contentOffset.x;
-        [scrollView setContentOffset:CGPointMake(pageWidth * (CGFloat)leftIndex, scrollView.contentOffset.y) animated:YES];
+        NSLog(@"center is %@; indexPath is {%@, %@}; cell is %@",NSStringFromCGPoint(targetCenter), @(indexPath.section), @(indexPath.item), attributes);
     }
 }
+
+//- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
+//{
+//    CGFloat velocity_X = velocity.x;
+//    NSLog(@"\n^^^ velocity.x: %@ ^^^\n", @(velocity_X));
+//    
+//    CGFloat x = targetContentOffset->x;
+//    CGFloat pageWidth = (H_JMAuthorCell*2 + GAP_JMAuthorCell);
+//
+//    CGFloat movedX = x - pageWidth * (CGFloat)leftIndex;
+//    
+//    if (movedX < -pageWidth *0.5) {
+//        // Move left
+//        
+//        CGFloat v_left = (fabs(velocity_X) > 0.4 ? fabs(round(velocity_X)) : 1);
+//        if (v_left > 3) {
+//            v_left = 2;
+//        }
+//        leftIndex -= v_left;
+//        if (leftIndex <= 0) {
+//            leftIndex = 0;
+//        }
+//    } else if (movedX > pageWidth * 0.5) {
+//        // Move right
+//        CGFloat v_right = fabs(round(velocity_X));
+//        if (v_right > 3) {
+//            v_right = 2;
+//        }
+//        leftIndex += (fabs(velocity_X) > 0.4 ? v_right : 1);
+////        if (leftIndex >= authorCount) {
+////            leftIndex = authorCount - 1;
+////        }
+//    }
+//    
+//    if (fabs(velocity_X) >= 2) {
+//        NSLog(@"\n***  >=2 leftIndex: %@ ***\n", @(leftIndex));
+//        targetContentOffset->x = pageWidth * (CGFloat)leftIndex;
+//    } else {
+//        NSLog(@"\n*** <2 leftIndex: %@ ***\n", @(leftIndex));
+//        targetContentOffset->x = scrollView.contentOffset.x;
+//        [scrollView setContentOffset:CGPointMake(pageWidth * (CGFloat)leftIndex, scrollView.contentOffset.y) animated:YES];
+//    }
+//}
 
 #pragma mark - getter & setter
 - (UICollectionView *)collectionView
