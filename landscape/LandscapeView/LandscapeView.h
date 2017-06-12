@@ -9,9 +9,14 @@
 #import <UIKit/UIKit.h>
 #import "LandscapeCell.h"
 
+typedef NS_ENUM(NSInteger, LandscapeType) {
+    LandscapeTypeLeft,      // 停靠在左边
+    LandscapeTypeCenter     // 停靠在中央
+};
+
 @interface LandscapeView : UIView
 
-// 此方法，以及每个item内部样式需要使用者自定制
+- (instancetype)initWithFrame:(CGRect)frame type:(LandscapeType)type;
 - (void)updateContent;
 
 @end

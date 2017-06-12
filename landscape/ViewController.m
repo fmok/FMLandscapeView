@@ -35,7 +35,7 @@
 - (LandscapeView *)landscapeView
 {
     if (!_landscapeView) {
-        _landscapeView = [[LandscapeView alloc] initWithFrame:CGRectZero];
+        _landscapeView = [[LandscapeView alloc] initWithFrame:CGRectZero type:LandscapeTypeLeft];
     }
     return _landscapeView;
 }
