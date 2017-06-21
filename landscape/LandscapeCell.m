@@ -7,10 +7,11 @@
 //
 
 #import "LandscapeCell.h"
+#import "UIImageView+WebCache.h"
 
 @interface LandscapeCell()
 
-@property (nonatomic, strong) UILabel *textLabel;
+@property (nonatomic, strong) UIImageView *imgView;
 
 @end
 
@@ -21,40 +22,38 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor colorWithRed:arc4random_uniform(255)/255.f green:arc4random_uniform(255)/255.f blue:arc4random_uniform(255)/255.f alpha:1];
-        self.layer.cornerRadius = 5.f;
+        self.layer.cornerRadius = 10.f;
         self.layer.masksToBounds = YES;
         self.selectedBackgroundView = nil;
-        [self addSubview:self.textLabel];
+        [self addSubview:self.imgView];
     }
     return self;
 }
 
 - (void)updateConstraints
 {
-    __weak typeof(self) weakSelf = self;
-    [self.textLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+    WS(weakSelf);
+    [self.imgView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(weakSelf);
     }];
     [super updateConstraints];
 }
 
 #pragma makr - Public methods
-- (void)updateContent:(NSString *)title
+- (void)updateContent:(NSString *)imgUrl
 {
-    self.textLabel.text = title;
+    [self.imgView sd_setImageWithURL:[NSURL URLWithString:imgUrl] placeholderImage:[UIImage imageNamed:@""] options:SDWebImageRetryFailed];
     [self setNeedsUpdateConstraints];
 }
 
 #pragma mark - getter & setter
-- (UILabel *)textLabel
+- (UIImageView *)imgView
 {
-    if (!_textLabel) {
-        _textLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        _textLabel.font = [UIFont systemFontOfSize:20.f];
-        _textLabel.textColor = [UIColor whiteColor];
-        _textLabel.textAlignment = NSTextAlignmentCenter;
+    if (!_imgView) {
+        _imgView = [[UIImageView alloc] initWithFrame:CGRectZero];
+        _imgView.contentMode = UIViewContentModeScaleAspectFill;
     }
-    return _textLabel;
+    return _imgView;
 }
 
 @end

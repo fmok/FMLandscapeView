@@ -9,10 +9,10 @@
 #import <UIKit/UIKit.h>
 
 #define H_JMAuthorCell 100.f
-#define GAP_JMAuthorCell 10.f
+#define GAP_JMAuthorCell 15.f
 
 @interface LandscapeCell : UICollectionViewCell
 
-- (void)updateContent:(NSString *)title;
+- (void)updateContent:(NSString *)imgUrl;
 
 @end

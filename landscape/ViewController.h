@@ -7,9 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "LandscapeView.h"
+#import "LandscapeCell.h"
 
 @interface ViewController : UIViewController
 
+@property (nonatomic, strong) LandscapeView *landscapeView;
 
 @end
 
