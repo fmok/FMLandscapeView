@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "LandscapeCell.h"
 
 typedef NS_ENUM(NSInteger, LandscapeType) {
     LandscapeTypeNone,      // 无，default

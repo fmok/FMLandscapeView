@@ -45,7 +45,6 @@ NSString *const LandscapeCellIdentifier = @"LandscapeCell";
         width_img = 0;
         currentType = type;
         [self addSubview:self.collectionView];
-        [self.collectionView registerClass:[LandscapeCell class] forCellWithReuseIdentifier:LandscapeCellIdentifier];
         [self addSubview:self.topLine];
         [self addSubview:self.bottomLine];
     }
